@@ -1,40 +1,29 @@
 #Author Przemysław Guzek
+import random
 from math import gcd, log, ceil, sqrt
-from random import randint,randrange, choice
+from random import randint, choice
 import sys
 
 class RabinMiller:
 
     def maxPrimeFactor(n):
         x = ceil(sqrt(n))
-        y = x**2 - n
+        y = pow(x, 2) - n
         while not sqrt(y).is_integer():
             x += 1
-            y = x**2 - n
+            y = pow(x, 2) - n
         return x + sqrt(y), x - sqrt(y)
 
     def miller_rabin(n, k, uni_exp):
-        # k = n - 1
-        # r = k
-        # guwno = True
-        # iterations = 0
-        #
-        # while guwno:
-        #     r = r/2
-        #     print(r)
-        #     iterations += 1
-        #     print(iterations)
-        #     if r % 2 != 0:
-        #         guwno = False
-        # q = k / pow(2, iterations)
-        # print(q)
-
-        r, s = 0, n - 1
+        r, s = 0, uni_exp
         while s % 2 == 0:
             r += 1
             s //= 2
-        for _ in range(k):
-            a = randrange(2, n - 1)
+        if n < k:
+            k = n;
+        a_list = list(range(2,n))
+        random.shuffle(a_list)
+        for a in a_list:
             x = pow(a, s, n)
             if x == 1 or x == n - 1:
                 continue
@@ -43,16 +32,11 @@ class RabinMiller:
                 if x == n - 1:
                     break
             else:
-                return False
+                if 1 in RabinMiller.maxPrimeFactor(n):
+                    return True
+                else:
+                    return str(int(choice(RabinMiller.maxPrimeFactor(n))))
         return True
-
-    # def is_prime(p, r=10):
-    #     for i in range(r):
-    #         if not milrab(p):
-    #             return False
-    #     return True
-
-
 
 
 
@@ -79,9 +63,7 @@ class RabinMiller:
         numbers = []
         for i in range(40):
             a = randint(2, n - 1)
-            b = pow(a, n-1, n)
-            if b == 1:
-                print(b)
+            b = pow(a, n - 1, n)
             numbers.append(b)
 
         if 1 in numbers:
@@ -90,9 +72,6 @@ class RabinMiller:
             open("wyjscie.txt", "w").write("Na pewno złożona")
 
         print(numbers)
-
-
-
 
 if __name__ == '__main__':
     with open("wejscie.txt", "r") as file:
@@ -112,14 +91,8 @@ if __name__ == '__main__':
 
     else:
         probability = pow(2, 40)
-        a = randint(2, n - 1)
-        # range_ = int(log(-probability+1, (1/4)))
-        # open("wyjscie.txt", "w").write(RabinMiller.miller_rabin(n, range_, uni_exponent))
-        t = 0
-        f = 0
-            # if RabinMiller.miller_rabin(n, probability, uni_exponent) == False:
-        if (RabinMiller.miller_rabin(n, probability, uni_exponent)) == True:
-                t += 1
+        result = RabinMiller.miller_rabin(n, probability, uni_exponent)
+        if result == True:
+            open("wyjscie.txt", "w").write("Prawdopodobnie pierwsza")
         else:
-                f += 1
-        print(t, f)
+            open("wyjscie.txt", "w").write(result)

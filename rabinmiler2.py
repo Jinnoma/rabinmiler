@@ -6,25 +6,17 @@ import sys
 
 class RabinMiller:
 
-    def maxPrimeFactor(n):
-        x = ceil(sqrt(n))
-        y = pow(x, 2) - n
-        while not sqrt(y).is_integer():
-            x += 1
-            y = pow(x, 2) - n
-        return x + sqrt(y), x - sqrt(y)
-
     def miller_rabin(n, k, uni_exp):
         r, s = 0, uni_exp
         while s % 2 == 0:
             r += 1
             s //= 2
         if n < k:
-            k = n;
-        a_list = list(range(2,n))
-        random.shuffle(a_list)
-        for a in a_list:
+            k = n
+        for _ in range(2, k):
+            a = randint(2, n)
             x = pow(a, s, n)
+            print(x)
             if x == 1 or x == n - 1:
                 continue
             for _ in range(r - 1):
@@ -32,36 +24,21 @@ class RabinMiller:
                 if x == n - 1:
                     break
             else:
-                if 1 in RabinMiller.maxPrimeFactor(n):
-                    return True
-                else:
-                    return str(int(choice(RabinMiller.maxPrimeFactor(n))))
+                return RabinMiller.prime_factors(n)
         return True
 
-
-
-			# r, s = 0, uni_exp
-			# while s % 2 == 0:
-			# 		r += 1
-			# 		s //= 2
-			# for _ in range(k):
-			# 		a = randrange(2, n - 1)
-			# 		x = pow(a, s, n)
-			# 		if x == 1 or x == n - 1:
-			# 		    continue
-			# 		for _ in range(r - 1):
-			# 			x = pow(x, 2, n)
-            #             if x == n - 1:
-			# 				break
-            #
-			# if 1 in RabinMiller.maxPrimeFactor(n):
-			# 	return "Prawdopodobnie pierwsza"
-			# return str(int(choice(RabinMiller.maxPrimeFactor(n))))
+    def prime_factors(n):
+        x = ceil(sqrt(n))
+        y = pow(x, 2) - n
+        while not sqrt(y).is_integer():
+            x += 1
+            y = pow(x, 2) - n
+        return x + sqrt(y), x - sqrt(y)
 
     @staticmethod
     def fermat(n):
         numbers = []
-        for i in range(40):
+        for _ in range(40):
             a = randint(2, n - 1)
             b = pow(a, n - 1, n)
             numbers.append(b)
@@ -95,4 +72,7 @@ if __name__ == '__main__':
         if result == True:
             open("wyjscie.txt", "w").write("Prawdopodobnie pierwsza")
         else:
-            open("wyjscie.txt", "w").write(result)
+            if 1 in result:
+                open("wyjscie.txt", "w").write("Prawdopodobnie pierwsza")
+            else:
+                open("wyjscie.txt", "w").write(str(int(choice(result))))
